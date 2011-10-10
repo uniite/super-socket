@@ -1,6 +1,7 @@
 from gevent import spawn, spawn_later
 from gevent.event import Event
 from gevent.socket import create_connection
+from gevent import socket
 from gevent.server import StreamServer
 from gevent.queue import Queue
 from gevent import sleep
@@ -76,7 +77,9 @@ class ProxyCore(object):
                     raise Exception()
                 print "Got data from %s: %s" % (source, data)
                 handler(data, *args)
-            except:
+            except Exception, e:
+                print e
+                print e.message
                 if self.connected.is_set():
                     spawn_later(1, self.reconnect_and_send)
                     self.connected.clear()
@@ -90,4 +93,28 @@ class ProxyCore(object):
 
     def stream(self, source, handler, *args):
         spawn(self._stream, source, handler, *args)
+
+
+
+
+def _stream_udp(source, target, target_addr):
+    while True:
+        data = source.recvfrom(65535)
+        target.sendto(data, target_addr)
+
+def stream_udp(source_addr, target_addr):
+    # Setup the sockets
+    source = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    source.bind(source_addr)
+    target = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    # Get first datagram, and the source's address
+    data, source_addr = source.recvfrom(65535)
+    target.sendto(data, target_addr)
+
+    # Source -> Target
+    spawn(_stream_udp, source, target, target_addr)
+    # Source <- Target
+    _stream_udp(target, source, source_addr)
+
 
