@@ -100,6 +100,7 @@ class ProxyCore(object):
 def _stream_udp(source, target, target_addr):
     while True:
         data, addr = source.recvfrom(65535)
+        print "Recv from %s" % addr
         target.sendto(data, target_addr)
 
 def stream_udp(source_addr, target_addr):
