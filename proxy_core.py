@@ -110,7 +110,7 @@ def _stream_udp(source, target):
         if incoming_stream == None:
             print "Setting up incoming stream"
             source["addr"] = addr
-            incoming_stream = spawn(_stream_udp, target, source, {})
+            incoming_stream = spawn(_stream_udp_incoming, target, source)
 
 def stream_udp(bind_addr, target_addr):
     # Setup the sockets
