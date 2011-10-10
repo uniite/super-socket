@@ -125,6 +125,6 @@ def stream_udp(bind_addr, target_addr):
     }
 
     # Source -> Target
-    _stream_udp(source, target, True)
+    _stream_udp(source, target)
 
 
