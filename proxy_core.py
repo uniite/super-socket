@@ -95,14 +95,20 @@ class ProxyCore(object):
         spawn(self._stream, source, handler, *args)
 
 
+def _stream_udp_incoming(source, target):
+    while True:
+        data, addr = source["socket"].recvfrom(65535)
+        print "Recv from %s" % str(addr)
+        target["socket"].sendto(data, target["addr"])
 
-
-def _stream_udp(source, target, incoming_stream=None):
+def _stream_udp(source, target):
+    incoming_stream = None
     while True:
         data, addr = source["socket"].recvfrom(65535)
         print "Recv from %s" % str(addr)
         target["socket"].sendto(data, target["addr"])
         if incoming_stream == None:
+            print "Setting up incoming stream"
             source["addr"] = addr
             incoming_stream = spawn(_stream_udp, target, source, {})
 
