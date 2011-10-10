@@ -52,13 +52,16 @@ class ProxyCore(object):
 
 
     def outgoing(self, data):
-        self.endpoints[self.current_endpoint].send(data)
+        socket = self.endpoints[self.current_endpoint]
+        socket.send(data)
+        socket.flush()
         print "Sent data to %s: %s" % (self.current_endpoint, data)
 
 
 
     def incoming(self, data, endpoint=None):
         self.client.send(data)
+        self.client.flush()
         print "Sent data to client: %s" % data
 
 
