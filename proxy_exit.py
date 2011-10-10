@@ -34,7 +34,7 @@ def start_session(client_socket, address):
     # Connect to the server
     if not current_connection:
         current_connection = Connection(client_socket, ENDPOINTS)
-        spawn_later(5.5, kill_connection)
+        #spawn_later(5.5, kill_connection)
     else:
         print "Got new connection!"
         current_connection.endpoints["client"] = client_socket
