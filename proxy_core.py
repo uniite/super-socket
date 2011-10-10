@@ -97,25 +97,28 @@ class ProxyCore(object):
 
 
 
-def _stream_udp(source, target, target_addr):
+def _stream_udp(source, target, incoming_stream=None):
     while True:
-        data, addr = source.recvfrom(65535)
+        data, addr = source["socket"].recvfrom(65535)
         print "Recv from %s" % str(addr)
-        target.sendto(data, target_addr)
+        target["socket"].sendto(data, target["addr"])
+        if incoming_stream == None:
+            source["addr"] = addr
+            incoming_stream = spawn(_stream_udp, target, source, {})
 
-def stream_udp(source_addr, target_addr):
+def stream_udp(bind_addr, target_addr):
     # Setup the sockets
-    source = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    source.bind(source_addr)
-    target = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    # Get first datagram, and the source's address
-    data, source_addr = source.recvfrom(65535)
-    target.sendto(data, target_addr)
+    source = {
+        "socket": socket.socket(socket.AF_INET, socket.SOCK_DGRAM),
+        "addr": None
+    }
+    source["socket"].bind(bind_addr)
+    target = {
+        "socket": socket.socket(socket.AF_INET, socket.SOCK_DGRAM),
+        "addr": target_addr
+    }
 
     # Source -> Target
-    spawn(_stream_udp, source, target, target_addr)
-    # Source <- Target
-    _stream_udp(target, source, source_addr)
+    _stream_udp(source, target, True)
 
 
