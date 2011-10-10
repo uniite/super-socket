@@ -8,7 +8,7 @@ from gevent import sleep
 from proxy_core import ProxyCore
 
 
-ENTRY_HOST = "127.0.0.1"
+ENTRY_HOST = "0.0.0.0"
 ENTRY_PORT = 5000
 ENDPOINTS = [
     ("127.0.0.1", 5005)

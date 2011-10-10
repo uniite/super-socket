@@ -11,7 +11,7 @@ from proxy_core import ProxyCore
 ENTRY_HOST = "127.0.0.1"
 ENTRY_PORT = 5001
 ENDPOINTS = [
-    ("127.0.0.1", 5000)
+    ("199.34.124.250", 5000)
 ]
 
 
